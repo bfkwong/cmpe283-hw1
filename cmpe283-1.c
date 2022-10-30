@@ -208,6 +208,8 @@ void
 detect_vmx_features(void)
 {
 	uint32_t lo, hi;
+	uint32_t secondaryProcCtlMask = 0x1;
+	uint32_t tertiaryProcCtlMask = 0x2000;
 
 	/* Pinbased controls */
 	rdmsr(IA32_VMX_PINBASED_CTLS, lo, hi);
@@ -222,16 +224,20 @@ detect_vmx_features(void)
 	report_capability(procbasedctls, 22, lo, hi);
 
 	/* Secondary Process controls */
-	rdmsr(IA32_VMX_PROCBASED_CTLS2, lo, hi);
-	pr_info("Secondary Process Controls MSR: 0x%llx\n",
-		(uint64_t)(lo | (uint64_t)hi << 32));
-	report_capability(procbasedctls2, 28, lo, hi);
+	if (hi & secondaryProcCtlMask) {
+		rdmsr(IA32_VMX_PROCBASED_CTLS2, lo, hi);
+		pr_info("Secondary Process Controls MSR: 0x%llx\n",
+			(uint64_t)(lo | (uint64_t)hi << 32));
+		report_capability(procbasedctls2, 28, lo, hi);
+	}
 
 	/* Tertiary Process controls */
-	rdmsr(IA32_VMX_PROCBASED_CTLS3, lo, hi);
-	pr_info("Tertiary Process Controls MSR: 0x%llx\n",
-		(uint64_t)(lo | (uint64_t)hi << 32));
-	report_capability(procbasedctls3, 4, lo, hi);
+	if (hi & tertiaryProcCtlMask) {
+		rdmsr(IA32_VMX_PROCBASED_CTLS3, lo, hi);	
+		pr_info("Tertiary Process Controls MSR: 0x%llx\n",
+			(uint64_t)(lo | (uint64_t)hi << 32));
+		report_capability(procbasedctls3, 4, lo, hi);
+	}
 
 	/* Exit controls */
 	rdmsr(IA32_VMX_EXIT_CTLS, lo, hi);
