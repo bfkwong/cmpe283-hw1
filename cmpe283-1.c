@@ -15,7 +15,7 @@
 #define IA32_VMX_PROCBASED_CTLS		0x482
 #define IA32_VMX_PROCBASED_CTLS2	0x48B
 #define IA32_VMX_EXIT_CTLS				0x483		// done
-#define IA32_VMX_ENTRY_CTLS				0x484
+#define IA32_VMX_ENTRY_CTLS				0x484		// done
 #define IA32_VMX_PROCBASED_CTLS3	0x492
 
 /*
@@ -80,6 +80,67 @@ struct capability_info entryctls[9] =
 };
 
 /*
+ * Primary process based control capabilities
+ * See SDM volume 3, section 24.6.2
+ */
+struct capability_info procbasedctls[21] =
+{
+	{ 2, "Interrupt-window exiting" },
+	{ 3, "Use TSC offsetting" },
+	{ 7, "HLT exiting" },
+	{ 9, "INVLPG exiting" },
+	{ 10, "MWAIT exiting" },
+	{ 11, "RDPMC exiting" },
+	{ 12, "RDTSC exiting" },
+	{ 15, "CR3-load exiting" },
+	{ 16, "CR3-store exiting" },
+	{ 19, "CR8-load exiting" },
+	{ 20, "CR8-store exiting" },
+	{ 21, "Use TPR shadow" },
+	{ 22, "NMI-window exiting" },
+	{ 23, "MOV-DR exiting" },
+	{ 24, "Unconditional I/O exiting" },
+	{ 25, "Use I/O bitmaps" },
+	{ 27, "Monitor trap flag" },
+	{ 28, "Use MSR bitmaps" },
+	{ 29, "MONITOR exiting" },
+	{ 30, "PAUSE exiting" },
+	{ 31, "Activate secondary controls" }
+};
+
+/*
+ * Secondary process based controls capabilities
+ * See SDM volume 3, section 24.6.2
+ */
+struct capability_info procbasedctls2[23] =
+{
+	{ 0, "Virtualize APIC accesses" },
+	{ 1, "Enable EPT" },
+	{ 2, "Descriptor-table exiting" },
+	{ 3, "Enable RDTSCP" },
+	{ 4, "Virtualize x2APIC mode" },
+	{ 5, "Enable VPID" },
+	{ 6, "WBINVD exiting" },
+	{ 7, "Unrestricted guest" },
+	{ 8, "APIC-register virtualization" },
+	{ 9, "Virtual-interrupt delivery" },
+	{ 10, "PAUSE-loop exiting" },
+	{ 11, "RDRAND exiting" },
+	{ 12, "Enable INVPCID" },
+	{ 13, "Enable VM functions" },
+	{ 14, "VMCS shadowing" },
+	{ 15, "Enable ENCLS exiting" },
+	{ 16, "RDSEED exiting" },
+	{ 17, "Enable PML" },
+	{ 18, "EPT-violation #VE" },
+	{ 19, "Conceal VMX non- root operation from Intel PT" },
+	{ 20, "Enable XSAVES/XRSTORS" },
+	{ 22, "Mode-based execute control for EPT" },
+	{ 25, "Use TSC scaling" },
+};
+
+
+/*
  * report_capability
  *
  * Reports capabilities present in 'cap' using the corresponding MSR values
@@ -126,6 +187,18 @@ detect_vmx_features(void)
 	pr_info("Pinbased Controls MSR: 0x%llx\n",
 		(uint64_t)(lo | (uint64_t)hi << 32));
 	report_capability(pinbased, 5, lo, hi);
+
+	/* Primary Process controls */
+	rdmsr(IA32_VMX_PROCBASED_CTLS, lo, hi);
+	pr_info("Primary Process Controls MSR: 0x%llx\n",
+		(uint64_t)(lo | (uint64_t)hi << 32));
+	report_capability(procbasedctls, 21, lo, hi);
+
+	/* Secondary Process controls */
+	rdmsr(IA32_VMX_PROCBASED_CTLS2, lo, hi);
+	pr_info("Secondary Process Controls MSR: 0x%llx\n",
+		(uint64_t)(lo | (uint64_t)hi << 32));
+	report_capability(procbasedctls2, 23, lo, hi);
 
 	/* Exit controls */
 	rdmsr(IA32_VMX_EXIT_CTLS, lo, hi);
