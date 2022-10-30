@@ -62,14 +62,16 @@ Then I created the `capability_info` structs for the different controls. These v
 Once these new structures have been created, we just need to enable it in `detect_vmx_features`. For example, for the exit controls, the following was created:
 
 ```
-	/* Exit controls */
+  /* Exit controls */
   // step 1: read the MSR from the defined address
-	rdmsr(IA32_VMX_EXIT_CTLS, lo, hi);
+  rdmsr(IA32_VMX_EXIT_CTLS, lo, hi);
+
   // step 2: print the MSR value
-	pr_info("Exit Controls MSR: 0x%llx\n",
-		(uint64_t)(lo | (uint64_t)hi << 32));
+  pr_info("Exit Controls MSR: 0x%llx\n",
+    (uint64_t)(lo | (uint64_t)hi << 32));
+
   // step 3: pass the MSR struct and the length into the provided `report_capability` function
-	report_capability(exitctls, 16, lo, hi);
+  report_capability(exitctls, 16, lo, hi);
 ```
 
 #### Conditional print of Secondary and Tertiery Process Controls MSRs
@@ -111,16 +113,18 @@ The code for the above described step is as follows
 
 ```
   // step 1: read primary process control MSR
-	rdmsr(IA32_VMX_PROCBASED_CTLS,t lo, hi);
+  rdmsr(IA32_VMX_PROCBASED_CTLS,t lo, hi);
+  
   // step 2: do logical between primary process control MSR's higher 32 bit and mask.
-  //         if the output is not 0, then continue into the if statemen
-	if (hi & secondaryProcCtlMask) {
+  // if the output is not 0, then continue into the if statemen
+  if (hi & secondaryProcCtlMask) {
+
     // step 3: read secondary process control bit and print information.
-		rdmsr(IA32_VMX_PROCBASED_CTLS2, lo, hi);
-		pr_info("Secondary Process Controls MSR: 0x%llx\n",
-			(uint64_t)(lo | (uint64_t)hi << 32));
-		report_capability(procbasedctls2, 28, lo, hi);
-	}
+    rdmsr(IA32_VMX_PROCBASED_CTLS2, lo, hi);
+    pr_info("Secondary Process Controls MSR: 0x%llx\n",
+      (uint64_t)(lo | (uint64_t)hi << 32));
+    report_capability(procbasedctls2, 28, lo, hi);
+  }
 ```
 
 ### Step 3: Testing
