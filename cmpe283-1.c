@@ -47,7 +47,7 @@ struct capability_info pinbased[5] =
  * Pinbased capabilities
  * See SDM volume 3, section 24.7.1
  */
-struct capability_info exit[11] =
+struct capability_info exitctls[11] =
 {
 	{ 2, "Save debug controls" },
 	{ 9, "Host address-space size" },
