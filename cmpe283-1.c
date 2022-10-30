@@ -14,7 +14,7 @@
 #define IA32_VMX_PINBASED_CTLS		0x481		// done
 #define IA32_VMX_PROCBASED_CTLS		0x482
 #define IA32_VMX_PROCBASED_CTLS2	0x48B
-#define IA32_VMX_EXIT_CTLS				0x483
+#define IA32_VMX_EXIT_CTLS				0x483		// done
 #define IA32_VMX_ENTRY_CTLS				0x484
 #define IA32_VMX_PROCBASED_CTLS3	0x492
 
@@ -44,7 +44,7 @@ struct capability_info pinbased[5] =
 };
 
 /*
- * Pinbased capabilities
+ * Exit capabilities
  * See SDM volume 3, section 24.7.1
  */
 struct capability_info exitctls[11] =
@@ -60,6 +60,23 @@ struct capability_info exitctls[11] =
 	{ 22, "Save VMX-preemption timer value" },
 	{ 23, "Clear IA32_BNDCFGS" },
 	{ 24, "Conceal VM exits from Intel PT" }
+};
+
+/*
+ * Entry capabilities
+ * See SDM volume 3, section 24.8.1
+ */
+struct capability_info entryctls[9] =
+{
+	{ 2, "Load debug controls" },
+	{ 9, "IA-32e mode guest" },
+	{ 10, "Entry to SMM" },
+	{ 11, "Deactivate dual-monitor treatment" },
+	{ 13, "Load IA32_PERF_GLOBA L_CTRL" },
+	{ 14, "Load IA32_PAT" },
+	{ 15, "Load IA32_EFER" },
+	{ 16, "Load IA32_BNDCFGS" },
+	{ 17, "Conceal VM entries from Intel PT" }
 };
 
 /*
@@ -110,11 +127,17 @@ detect_vmx_features(void)
 		(uint64_t)(lo | (uint64_t)hi << 32));
 	report_capability(pinbased, 5, lo, hi);
 
-		/* Exit controls */
+	/* Exit controls */
 	rdmsr(IA32_VMX_EXIT_CTLS, lo, hi);
 	pr_info("Exit Controls MSR: 0x%llx\n",
 		(uint64_t)(lo | (uint64_t)hi << 32));
 	report_capability(exitctls, 11, lo, hi);
+
+	/* Entry controls */
+	rdmsr(IA32_VMX_ENTRY_CTLS, lo, hi);
+	pr_info("Entry Controls MSR: 0x%llx\n",
+		(uint64_t)(lo | (uint64_t)hi << 32));
+	report_capability(entryctls, 9, lo, hi);
 }
 
 /*
