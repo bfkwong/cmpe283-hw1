@@ -10,7 +10,9 @@ I did this homework by myself.
 
 ## 2. Describe in detail the steps you used to complete the assignment. Consider your reader to be someone skilled in software development but otherwise unfamiliar with the assignment. Good answers to this question will be recipes that someone can follow to reproduce your development steps.
 
-### Step 1: Development Environment setup
+### Step 1: Environment setup
+
+#### Development Environment
 
 The first thing I did was to make sure that I could run the sample code that was provided. I initiated a GCP VM and created a directory with the `Makefile` and the `cmpe283-1.c` file.
 
@@ -30,6 +32,35 @@ sudo rmmod ./cmpe283-1.ko
 sudo dmesg
 make clean
 ```
+
+#### Enabling Nested Virtualization on GCP VM
+
+I followed this article to enable nested virtualization: https://cloud.google.com/compute/docs/instances/nested-virtualization/enabling#gcloud_1. The actionable steps that I took were the following: 
+
+1. Shutdown my GCP VM instance named `cmpe283-hw1` because this cannot be done while running or suspended.
+2. Downloaded gcloud CLI with their `./install.sh` script
+3. Logged into gcloud CLI with `gcloud auth login`
+4. Downloaded the VM instance config file with the following command. What differed from the the instructions was that I had to add the projectId via the `--project` tag.
+```
+gcloud compute instances export cmpe283-hw1 \ 
+  --destination=./vmconfig.yaml \
+  --zone=us-west1-b \
+  --project=xxxxxxxx
+```
+5. Opened the `./vmconfig.yaml` file and added the following to the file.
+```
+advancedMachineFeatures:
+  enableNestedVirtualization: true
+```
+6. Upload the `vmconfig.yaml` file to GCP. Note that the VM must be stopped for this to be successful
+```
+gcloud compute instances update-from-file cmpe283-hw1 \
+  --source=./vmconfig.yaml \
+  --most-disruptive-allowed-action=RESTART \
+  --zone=us-west1-b \
+  --project=xxxxxxxx
+```
+7. Start the VM and check to make sure that nested virtualization has been enabled. You can check by running `grep -cw vmx /proc/cpuinfo`. It is on if it returns a non-zero value.
 
 ### Step 2: Writing the Code
 
@@ -129,4 +160,98 @@ The code for the above described step is as follows
 
 ### Step 3: Testing
 
-I ran my `./start.sh` script to test the output. Everything printed out correctly and I went to get dinner.
+I ran my `./start.sh` script to test the output and got the following output.
+
+```
+[   59.566149] CMPE 283 Assignment 1 Module Start
+[   59.571945] Pinbased Controls MSR: 0x3f00000016
+[   59.577975]   External Interrupt Exiting: Can set=Yes, Can clear=Yes
+[   59.584444]   NMI Exiting: Can set=Yes, Can clear=Yes
+[   59.589613]   Virtual NMIs: Can set=Yes, Can clear=Yes
+[   59.594860]   Activate VMX Preemption Timer: Can set=No, Can clear=Yes
+[   59.601493]   Process Posted Interrupts: Can set=No, Can clear=Yes
+[   59.609171] Primary Process Controls MSR: 0xf7b9fffe0401e172
+[   59.614936]   Interrupt-window exiting: Can set=Yes, Can clear=Yes
+[   59.622617]   Use TSC offsetting: Can set=Yes, Can clear=Yes
+[   59.628391]   HLT exiting: Can set=Yes, Can clear=Yes
+[   59.634929]   INVLPG exiting: Can set=Yes, Can clear=Yes
+[   59.640445]   MWAIT exiting: Can set=Yes, Can clear=Yes
+[   59.645778]   RDPMC exiting: Can set=Yes, Can clear=Yes
+[   59.651113]   RDTSC exiting: Can set=Yes, Can clear=Yes
+[   59.656456]   CR3-load exiting: Can set=Yes, Can clear=No
+[   59.661967]   CR3-store exiting: Can set=Yes, Can clear=No
+[   59.667571]   Activate tertiary controls: Can set=No, Can clear=Yes
+[   59.673950]   CR8-load exiting: Can set=Yes, Can clear=Yes
+[   59.679552]   CR8-store exiting: Can set=Yes, Can clear=Yes
+[   59.685233]   Use TPR shadow: Can set=Yes, Can clear=Yes
+[   59.690666]   NMI-window exiting: Can set=No, Can clear=Yes
+[   59.696359]   MOV-DR exiting: Can set=Yes, Can clear=Yes
+[   59.703161]   Unconditional I/O exiting: Can set=Yes, Can clear=Yes
+[   59.709536]   Use I/O bitmaps: Can set=Yes, Can clear=Yes
+[   59.715056]   Monitor trap flag: Can set=No, Can clear=Yes
+[   59.720652]   Use MSR bitmaps: Can set=Yes, Can clear=Yes
+[   59.727544]   MONITOR exiting: Can set=Yes, Can clear=Yes
+[   59.733068]   PAUSE exiting: Can set=Yes, Can clear=Yes
+[   59.739292]   Activate secondary controls: Can set=Yes, Can clear=Yes
+[   59.747219] Secondary Process Controls MSR: 0x51ff00000000
+[   59.752823]   Virtualize APIC accesses: Can set=Yes, Can clear=Yes
+[   59.759119]   Enable EPT: Can set=Yes, Can clear=Yes
+[   59.765569]   Descriptor-table exiting: Can set=Yes, Can clear=Yes
+[   59.771863]   Enable RDTSCP: Can set=Yes, Can clear=Yes
+[   59.777198]   Virtualize x2APIC mode: Can set=Yes, Can clear=Yes
+[   59.783316]   Enable VPID: Can set=Yes, Can clear=Yes
+[   59.788571]   WBINVD exiting: Can set=Yes, Can clear=Yes
+[   59.793995]   Unrestricted guest: Can set=Yes, Can clear=Yes
+[   59.799762]   APIC-register virtualization: Can set=Yes, Can clear=Yes
+[   59.806406]   Virtual-interrupt delivery: Can set=No, Can clear=Yes
+[   59.812781]   PAUSE-loop exiting: Can set=No, Can clear=Yes
+[   59.818467]   RDRAND exiting: Can set=No, Can clear=Yes
+[   59.823801]   Enable INVPCID: Can set=Yes, Can clear=Yes
+[   59.829226]   Enable VM functions: Can set=No, Can clear=Yes
+[   59.834996]   VMCS shadowing: Can set=Yes, Can clear=Yes
+[   59.840424]   Enable ENCLS exiting: Can set=No, Can clear=Yes
+[   59.846366]   RDSEED exiting: Can set=No, Can clear=Yes
+[   59.851697]   Enable PML: Can set=No, Can clear=Yes
+[   59.856681]   EPT-violation #VE: Can set=No, Can clear=Yes
+[   59.863673]   Conceal VMX from PT: Can set=No, Can clear=Yes
+[   59.869440]   Enable XSAVES/XRSTORS: Can set=No, Can clear=Yes
+[   59.875393]   Mode-based execute control for EPT: Can set=No, Can clear=Yes
+[   59.882463]   Sub-page write permissions for EPT: Can set=No, Can clear=Yes
+[   59.889549]   Intel PT uses guest physical addresses: Can set=No, Can clear=Yes
+[   59.896966]   Use TSC scaling: Can set=No, Can clear=Yes
+[   59.903769]   Enable user wait and pause: Can set=No, Can clear=Yes
+[   59.910144]   Enable PCONFIG: Can set=No, Can clear=Yes
+[   59.915489]   Enable ENCLV exiting: Can set=No, Can clear=Yes
+[   59.923686] Exit Controls MSR: 0x3fefff00036dff
+[   59.928325]   Save debug controls: Can set=Yes, Can clear=No
+[   59.935477]   Host address-space size: Can set=Yes, Can clear=Yes
+[   59.941690]   Load IA32_PERF_GLOBAL_CTRL: Can set=No, Can clear=Yes
+[   59.948068]   Acknowledge interrupt on exit: Can set=Yes, Can clear=Yes
+[   59.956172]   Save IA32_PAT: Can set=Yes, Can clear=Yes
+[   59.961502]   Load IA32_PAT: Can set=Yes, Can clear=Yes
+[   59.966834]   Save IA32_EFER: Can set=Yes, Can clear=Yes
+[   59.973647]   Load IA32_EFER: Can set=Yes, Can clear=Yes
+[   59.979070]   Save VMX-preemption timer value: Can set=No, Can clear=Yes
+[   59.985912]   Clear IA32_BNDCFGS: Can set=No, Can clear=Yes
+[   59.991593]   Conceal VMX from Intel PT: Can set=No, Can clear=Yes
+[   59.997888]   Clear IA32_RTIT_CTL: Can set=No, Can clear=Yes
+[   60.003658]   Clear IA32_LBR_CTL: Can set=No, Can clear=Yes
+[   60.010729]   Load CET state: Can set=No, Can clear=Yes
+[   60.016070]   Load PKRS: Can set=No, Can clear=Yes
+[   60.020974]   Save IA32_PERF_GLOBAL_CTL: Can set=No, Can clear=Yes
+[   60.027276] Entry Controls MSR: 0xd3ff000011ff
+[   60.031831]   Load debug controls: Can set=Yes, Can clear=No
+[   60.038992]   IA-32e mode guest: Can set=Yes, Can clear=Yes
+[   60.044685]   Entry to SMM: Can set=No, Can clear=Yes
+[   60.049843]   Deactivate dual-monitor treatment: Can set=No, Can clear=Yes
+[   60.058209]   Load IA32_PERF_GLOBAL_CTRL: Can set=No, Can clear=Yes
+[   60.064599]   Load IA32_PAT: Can set=Yes, Can clear=Yes
+[   60.069934]   Load IA32_EFER: Can set=Yes, Can clear=Yes
+[   60.075375]   Load IA32_BNDCFGS: Can set=No, Can clear=Yes
+[   60.080968]   Conceal VMX from PT: Can set=No, Can clear=Yes
+[   60.088120]   Load IA32_RTIT_CTL: Can set=No, Can clear=Yes
+[   60.093813]   Load CET state: Can set=No, Can clear=Yes
+[   60.099147]   Load guest IA32_LBR_CTL: Can set=No, Can clear=Yes
+[   60.106649]   Load PKRS: Can set=No, Can clear=Yes
+[   60.119261] CMPE 283 Assignment 1 Module Exits
+```
