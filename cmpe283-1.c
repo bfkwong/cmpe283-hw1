@@ -47,7 +47,7 @@ struct capability_info pinbased[5] =
  * Exit capabilities
  * See SDM volume 3, section 24.7.1
  */
-struct capability_info exitctls[11] =
+struct capability_info exitctls[16] =
 {
 	{ 2, "Save debug controls" },
 	{ 9, "Host address-space size" },
@@ -71,7 +71,7 @@ struct capability_info exitctls[11] =
  * Entry capabilities
  * See SDM volume 3, section 24.8.1
  */
-struct capability_info entryctls[9] =
+struct capability_info entryctls[13] =
 {
 	{ 2, "Load debug controls" },
 	{ 9, "IA-32e mode guest" },
