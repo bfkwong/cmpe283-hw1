@@ -14,16 +14,14 @@ I did this homework by myself.
 
 The first thing I did was to make sure that I could run the sample code that was provided. I initiated a GCP VM and created a directory with the `Makefile` and the `cmpe283-1.c` file.
 
-The next thing I did was to set up git on the VM so I could version track my progress. To do this I had to download git on my VM with `sudo apt-get install git`. Next, I have to generate an SSH key with `ssh-keygen -b 4096 -t rsa ` and add this to my Github account to access the repo.
+The next thing I did was to set up git on the VM so I could version track my progress. To do this I had to download git on my VM with `sudo apt-get install git`. Next, I have to generate an SSH key with `ssh-keygen -b 4096 -t rsa` and add the public SSH key in `id_rsa.pub` to my Github account to access the repo.
 
-The next step that I did was to install all of the necessary libraries necessary for this homework assignment, they included:
+The next step that I did was to install all of the necessary libraries necessary for this homework assignment, which were:
 
 1. `sudo apt install gcc make`
 2. `sudo apt install linux-headers-$(uname -r)`
 
-At this point I was a little confused because the `uname -r` responded with `5.10.0-18-cloud-amd64`. I wasn't sure if this meant that I had initiated the VM wrong. So I went back to check my VM config and it seemed like I did configure my VM correctly. I confirmed this by install `cpuid` and running it to see `vendor_id = "GenuineIntel"`.
-
-To help myself make the development go faster, I created a shell script called `start.sh` that would run all of the commands at once. So I can test and develop quicker. I had to do `chmod 777 ./start.sh` to make the script executable. The content of `./start.sh` are below:
+To help myself develop faster, I created a shell script called `start.sh` that would run all of the commands at once. I had to do `chmod 777 ./start.sh` to make the script executable. The content of `./start.sh` are below:
 
 ```
 make
@@ -35,9 +33,9 @@ make clean
 
 ### Step 2: Writing the Code
 
-#### Making all of the MSRs everything print
+#### Printing all MSRs unconditionally
 
-I started off by defining all of the MSR indices at the top. I got these values from the assignment PDF
+I started off by defining all the MSR indices at the top. These values are from the assignment PDF:
 
 ```
 #define IA32_VMX_PINBASED_CTLS      0x481
@@ -48,7 +46,7 @@ I started off by defining all of the MSR indices at the top. I got these values 
 #define IA32_VMX_PROCBASED_CTLS3    0x492
 ```
 
-Then I created the `capability_info` structs for the different controls. These values were copied these from the SDM directly. These are where I got the control information from:
+Then I created the `capability_info` structs for the different controls. These values were copied these from the SDM directly. See the chapters below:
 
 1. `struct capability_info exitctls[16]`:
    Exit capabilities in vol 3 - 24.7.1
