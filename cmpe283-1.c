@@ -53,12 +53,12 @@ struct capability_info exitctls[11] =
 	{ 9, "Host address-space size" },
 	{ 12, "Load IA32_PERF_GLOB AL_CTRL" },
 	{ 15, "Acknowledge interrupt on exit" },
-	{ 18, "Save IA32_PAT" }
-	{ 19, "Load IA32_PAT" }
-	{ 20, "Save IA32_EFER" }
-	{ 21, "Load IA32_EFER" }
-	{ 22, "Save VMX-preemption timer value" }
-	{ 23, "Clear IA32_BNDCFGS" }
+	{ 18, "Save IA32_PAT" },
+	{ 19, "Load IA32_PAT" },
+	{ 20, "Save IA32_EFER" },
+	{ 21, "Load IA32_EFER" },
+	{ 22, "Save VMX-preemption timer value" },
+	{ 23, "Clear IA32_BNDCFGS" },
 	{ 24, "Conceal VM exits from Intel PT" }
 };
 
