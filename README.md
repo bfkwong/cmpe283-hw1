@@ -25,7 +25,7 @@ At this point I was a little confused because the `uname -r` responded with `5.1
 
 To help myself make the development go faster, I created a shell script called `start.sh` that would run all of the commands at once. So I can test and develop quicker. I had to do `chmod 777 ./start.sh` to make the script executable.
 
-./start.sh:
+The content of `./start.sh` are below:
 
 ```
 make
