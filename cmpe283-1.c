@@ -60,10 +60,10 @@ struct capability_info exitctls[11] =
 	{ 22, "Save VMX-preemption timer value" },
 	{ 23, "Clear IA32_BNDCFGS" },
 	{ 24, "Conceal VMX from Intel PT" },
-	{ 25, "Clear IA32_RTIT_CTL" }
-	{ 26, "Clear IA32_LBR_CTL" }
-	{ 28, "Load CET state" }
-	{ 29, "Load PKRS" }
+	{ 25, "Clear IA32_RTIT_CTL" },
+	{ 26, "Clear IA32_LBR_CTL" },
+	{ 28, "Load CET state" },
+	{ 29, "Load PKRS" },
 	{ 30, "Save IA32_PERF_GLOBAL_CTL" }
 };
 
@@ -81,10 +81,10 @@ struct capability_info entryctls[9] =
 	{ 14, "Load IA32_PAT" },
 	{ 15, "Load IA32_EFER" },
 	{ 16, "Load IA32_BNDCFGS" },
-	{ 17, "Conceal VMX from PT" }
-	{ 18, "Load IA32_RTIT_CTL" }
-	{ 20, "Load CET state" }
-	{ 21, "Load guest IA32_LBR_CTL" }
+	{ 17, "Conceal VMX from PT" },
+	{ 18, "Load IA32_RTIT_CTL" },
+	{ 20, "Load CET state" },
+	{ 21, "Load guest IA32_LBR_CTL" },
 	{ 22, "Load PKRS" }
 };
 
@@ -149,8 +149,8 @@ struct capability_info procbasedctls2[28] =
 	{ 23, "Sub-page write permissions for EPT" },
 	{ 24, "Intel PT uses guest physical addresses" },
 	{ 25, "Use TSC scaling" },
-	{ 26, "Enable user wait and pause" }
-	{ 27, "Enable PCONFIG" }
+	{ 26, "Enable user wait and pause" },
+	{ 27, "Enable PCONFIG" },
 	{ 28, "Enable ENCLV exiting" }
 };
 
@@ -163,7 +163,7 @@ struct capability_info procbasedctls3[4] =
 	{ 0, "LOADIWKEY exiting" },
 	{ 1, "Enable HLAT" },
 	{ 2, "EPT paging-write control" },
-	{ 3, "Guest-paging verification" },
+	{ 3, "Guest-paging verification" }
 };
 
 
